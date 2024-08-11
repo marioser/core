@@ -122,8 +122,6 @@ services:
     restart: unless-stopped
     volumes:
         - "node-red-data:/data"
-    ports:
-      - 1880
     labels:
       # Enable traefik
       - "traefik.enable=true"
@@ -137,7 +135,7 @@ services:
       # Apply Middelware to router node-red
       - "traefik.http.routers.node-red.middlewares=node-red-clearPrefix"
       # connect service to loadbalancer whit port 1880
-      - "traefik.http.services.node-red.loadbalancer.server.port=1880"
+      - "traefik.http.services.node-red.loadbalancer.server.port=80"
       - "io.balena.features.dbus=true"
       - "io.balena.features.sysfs=true"
       - "io.balena.features.supervisor-api=true"
