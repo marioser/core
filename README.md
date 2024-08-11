@@ -32,7 +32,7 @@ You have two options here:
 
 You can deploy this project to a new balenaCloud application in one click using the button below:
 
-[![](https://balena.io/deploy.svg)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/marioser/mingz)
+[![](https://balena.io/deploy.svg)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/marioser/core)
 
 Or, you can create an application in your balenaCloud dashboard and balena push this code to it the traditional way.
 
@@ -49,7 +49,7 @@ While the device boots (it will eventually show up in the Balena dashboard) we w
 
 ```
 cd ~/workspace
-git clone https://github.com/marioser/mingz
+git clone https://github.com/marioser/core
 cd ming
 ```
 
@@ -79,9 +79,27 @@ For running Node-RED, use the local IP address on port 80, if you are on the sam
 
 Add new Node-RED nodes on the Dockerfile templates on the `node-red` folder in the project. Find more an example [here](https://github.com/mpous/ming/blob/3c2e5eac92d7be3b643ca4fe6d29d0aefd533832/node-red/Dockerfile.raspberrypi4-64#L11).
 
+## Grafana
+
+Variable Name | Default | Description
+------------ | ------------- | -------------
+PORT | `80` | localhost/grafana
+USERNAME | `admin` | the Grafana admin username
+PASS | `changeme` | the Grafana pass for username
+
+## Influxdbv2
+
+Variable Name | Default | Description
+------------ | ------------- | -------------
+PORT | `80` | influxdb2.ubox.localhost
+USERNAME | `admin` | the influx admin username
+PASS | `changeme` | the influx pass for username
+
+### Add new Node-RED nodes
+
 ### Add new services
 
-For adding new services, use the `docker-compose` [here](https://github.com/mpous/ming/blob/master/docker-compose.yml). Go to [balenaHub](https://hub.balena.io) and use the blocks available there to accelerate your development.
+For adding new services, use the `docker-compose` [here](https://github.com/marioser/core/blob/main/docker-compose.yml). Go to [balenaHub](https://hub.balena.io) and use the blocks available there to accelerate your development.
 
 ### Deploy your flow into your entire fleet
 
@@ -89,7 +107,14 @@ If you would like to deploy your flow into your entire fleet, you can introduce 
 
 Go to the Node-RED UI and `Import` the flow and start using it.
 
+## Traefik
 
+Variable Name | Default | Description
+------------ | ------------- | -------------
+Dashboard | `8080` | Access to Traefik Dashboard
+Rute Node-red | `/node-red` | Access to node-red
+Rute Grafana | `/grafana` | Access to Grafana
+Rute Influx |`influxdb2.ubox.localhost`| Acces to Influx DB
 
 ## Attribution
 
