@@ -120,7 +120,7 @@ services:
     privileged: true
     restart: unless-stopped
     volumes:
-        - 'node-red-data:/data'
+        - "node-red-data:/data"
     labels:
       # Enable traefik
       - "traefik.enable=true"
