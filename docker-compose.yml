@@ -196,10 +196,10 @@ services:
       node-red:
         condition: service_started
 
-  # whoami:
-  #   container_name: whoami
-  #   image: traefik/whoami
-  #   labels:
-  #     - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
+  whoami:
+    container_name: whoami
+    image: traefik/whoami
+    labels:
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
   #   networks:
   #     - backend
