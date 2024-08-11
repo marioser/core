@@ -1,0 +1,202 @@
+
+volumes:
+  node-red-data:
+  grafana-data:
+  grafana-storage:
+  influxdb-data:
+  influxdb-etc:
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: overlay
+    attachable: true
+
+services:
+
+# ------------------------------------------------------------------------------------
+  # MQTT
+  # ------------------------------------------------------------------------------------
+  mqtt:
+    image: eclipse-mosquitto:1.6.15
+    container_name: mqtt
+    ports:
+      - "1883:1883"
+    restart: always
+    environment:
+      - "TZ=America/Bogota"
+    networks:
+      - backend
+      - frontend
+
+  # ------------------------------------------------------------------------------------
+  # Influxdb
+  # ------------------------------------------------------------------------------------
+  influxdb:
+    image: influxdb:2.7.9-alpine
+    container_name: influxdb
+    restart: unless-stopped
+    hostname: influxdb
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+      - influxdb-etc:/etc/influxdb
+    labels:
+      # Enable traefik support for this container
+      - "traefik.enable=true"
+      # Set service port
+      - "traefik.http.services.influxdb.loadbalancer.server.port=8086"
+      # Make it available on the "web" entrypoint which is defined below as :80
+      - "traefik.http.routers.influxdb.entrypoints=web"
+      # Add a specific path prefix that will be expected on the URL suffix
+      - "traefik.http.routers.influxdb.rule=Host(`influxdb2.ubox.localhost`)"
+      # Redirect a request to root page to influxdb service
+      # - "traefik.http.middlewares.influxdb-clearPrefix.stripprefix.prefixes=/influxdb2"
+      # - "traefik.http.middlewares.influxdb-clearPrefix.stripprefix.forceSlash=false"
+      # # # Apply Middelware to router influxdb
+      # - "traefik.http.routers.influxdb.middlewares=influxdb-clearPrefix"
+
+    environment:
+      # - "DOCKER_INFLUXDB_INIT_MODE=setup"
+      - "INFLUXDB_ADMIN_USER=admin"
+      - "INFLUXDB_ADMIN_PASSWORD=changeme"
+      - "INFLUXDB_INIT_ORG=ubox"
+      - "INFLUXDB_INIT_BUCKET=ubox-energia"
+      - "INFLUXDB_HTTP_AUTH_ENABLED=true"
+      - "TZ=America/Bogota"
+      
+    networks:
+      - backend
+
+# ------------------------------------------------------------------------------------
+  # Grafana
+  # ------------------------------------------------------------------------------------
+  grafana:
+    image: grafana/grafana:main
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      # The HTTP port
+      - "3000:3000"
+    volumes:
+      - "grafana-data:/data"
+      - "grafana-storage:/var/lib/grafana"
+    environment:
+      - "TZ=America/Bogota"
+      - "GF_SERVER_ROOT_URL=/grafana"
+      - "GF_INSTALL_PLUGINS=grafana-clock-panel, grafana-simple-json-datasource"
+      - "GF_SERVER_SERVE_FROM_SUB_PATH=true"
+      # - "GF_SECURITY_ADMIN_USER=admin"
+      # - "GF_SECURITY_ADMIN_PASSWORD=changeme"
+      #- "GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}"
+    labels:
+      # Enable traefik support for this container
+      - "traefik.enable=true"
+      # Set service port
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+      # Make it available on the "web" entrypoint which is defined below as :80
+      - "traefik.http.routers.grafana.entrypoints=web"
+      # Add a specific path prefix that will be expected on the URL suffix
+      - "traefik.http.routers.grafana.rule=PathPrefix(`/grafana`)"
+      # Redirect a request to root page to grafana service
+      - "traefik.http.routers.grafana-main.rule=( Path(`/`) )"
+      - "traefik.http.middlewares.redirect-root.redirectregex.regex=^/"
+      - "traefik.http.middlewares.redirect-root.redirectregex.replacement=/grafana/?orgId=1&kiosk"
+      - "traefik.http.routers.grafana-main.middlewares=redirect-root"
+    depends_on:
+      influxdb:
+        condition: service_started
+      reverse-proxy:
+        condition: service_started
+    networks:
+      - backend
+#---------------------------------------------------------------
+# Node-red
+#---------------------------------------------------------------
+
+  node-red:
+    image: bh.cr/balenalabs/balena-node-red
+    container_name: node-red
+    privileged: true
+    restart: unless-stopped
+    volumes:
+        - 'node-red-data:/data'
+    labels:
+      # Enable traefik
+      - "traefik.enable=true"
+      # Enable entrypoint HTTP Web
+      - "traefik.http.routers.node-red.entrypoints=web"
+      # Routing Gets /node-red
+      - "traefik.http.routers.node-red.rule=PathPrefix(`/node-red`)"
+      # Prepare Erase via Middelware Prefix /node-red
+      - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.prefixes=/node-red"
+      - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.forceSlash=false"
+      # Apply Middelware to router node-red
+      - "traefik.http.routers.node-red.middlewares=node-red-clearPrefix"
+      # connect service to loadbalancer whit port 1880
+      - "traefik.http.services.node-red.loadbalancer.server.port=1880"
+      - "io.balena.features.dbus=true"
+      - "io.balena.features.sysfs=true"
+      - "io.balena.features.supervisor-api=true"
+      - "io.balena.features.balena-api=true"
+
+    environment:
+        TZ: America/Bogota
+        PORT: 1880
+        USERNAME: "balena"
+        PASSWORD: "balena"
+        ENCRIPTION_KEY: "balena"        
+    cap_add:
+        - SYS_RAWIO
+    devices:
+        - "/dev/mem:/dev/mem"
+        - "/dev/gpiomem:/dev/gpiomem"
+        - "/dev/i2c-1:/dev/i2c-1"
+    networks:
+      - backend
+    depends_on:
+      influxdb:
+        condition: service_started
+#---------------------------------------------------------------
+# Traefik Reverse Proxy
+#---------------------------------------------------------------
+  reverse-proxy:
+    container_name: reverse-proxy
+    # The official v3 Traefik docker image
+    image: traefik:v3.1.2
+    # Enables the web UI and tells Traefik to listen to docker
+    command:
+        - "--log.level=DEBUG"
+        - "--accesslog=true"
+        - "--accesslog.filepath=/var/log/traefik.log"
+        - "--api.dashboard=true"
+        # Uncomment this to enable the Traefik WebUI on port :8080
+        - "--api.insecure"
+        - "--providers.docker=true"
+        - "--providers.docker.endpoint=unix:///var/run/balena-engine.sock"
+        - "--providers.docker.exposedbydefault=true"
+        - "--entrypoints.web.address=:80"
+    restart: always
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+    labels:
+        # So that Traefik can listen to the Docker events
+        io.balena.features.balena-socket: '1'
+    networks:
+      - backend
+      - frontend
+    depends_on:
+      node-red:
+        condition: service_started
+
+  whoami:
+    container_name: whoami
+    image: traefik/whoami
+    labels:
+      - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
