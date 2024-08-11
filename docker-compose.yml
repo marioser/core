@@ -122,6 +122,8 @@ services:
     restart: unless-stopped
     volumes:
         - "node-red-data:/data"
+    ports:
+      - 1880
     labels:
       # Enable traefik
       - "traefik.enable=true"
