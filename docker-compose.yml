@@ -176,7 +176,7 @@ services:
         # Uncomment this to enable the Traefik WebUI on port :8080
         - "--api.insecure"
         - "--providers.docker=true"
-        - "--providers.docker.endpoint=unix:///var/run/docker.sock"
+        - "--providers.docker.endpoint=unix:///var/run/balena-engine.sock"
         - "--providers.docker.exposedbydefault=true"
         - "--entrypoints.web.address=:80"
     restart: always
