@@ -125,6 +125,8 @@ services:
     labels:
       # Enable traefik
       - "traefik.enable=true"
+      # connect service to loadbalancer whit port 1880
+      - "traefik.http.services.node-red.loadbalancer.server.port=80"
       # Enable entrypoint HTTP Web
       - "traefik.http.routers.node-red.entrypoints=web"
       # Routing Gets /node-red
@@ -134,8 +136,6 @@ services:
       - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.forceSlash=false"
       # Apply Middelware to router node-red
       - "traefik.http.routers.node-red.middlewares=node-red-clearPrefix"
-      # connect service to loadbalancer whit port 1880
-      - "traefik.http.services.node-red.loadbalancer.server.port=80"
       - "io.balena.features.dbus=true"
       - "io.balena.features.sysfs=true"
       - "io.balena.features.supervisor-api=true"
