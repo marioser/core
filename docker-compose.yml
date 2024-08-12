@@ -120,6 +120,8 @@ services:
     container_name: node-red
     privileged: true
     restart: unless-stopped
+    ports:
+      - 1880:1880
     volumes:
         - "node-red-data:/data"
     labels:
@@ -136,14 +138,14 @@ services:
       - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.forceSlash=false"
       # Apply Middelware to router node-red
       - "traefik.http.routers.node-red.middlewares=node-red-clearPrefix"
-      - "io.balena.features.dbus=true"
-      - "io.balena.features.sysfs=true"
-      - "io.balena.features.supervisor-api=true"
-      - "io.balena.features.balena-api=true"
+      # - "io.balena.features.dbus=true"
+      # - "io.balena.features.sysfs=true"
+      # - "io.balena.features.supervisor-api=true"
+      # - "io.balena.features.balena-api=true"
 
     environment:
         TZ: America/Bogota
-        PORT: 80
+        PORT: 1880
         USERNAME: "balena"
         PASSWORD: "balena"
         ENCRIPTION_KEY: "balena"        
@@ -174,7 +176,7 @@ services:
         # Uncomment this to enable the Traefik WebUI on port :8080
         - "--api.insecure"
         - "--providers.docker=true"
-        - "--providers.docker.endpoint=unix:///var/run/balena-engine.sock"
+        - "--providers.docker.endpoint=unix:///var/run/docker.sock"
         - "--providers.docker.exposedbydefault=true"
         - "--entrypoints.web.address=:80"
     restart: always
