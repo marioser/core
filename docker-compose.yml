@@ -7,11 +7,11 @@ volumes:
   influxdb-data:
   influxdb-etc:
 
-networks:
-  frontend:
-    driver: bridge
-  backend:
-    driver: bridge
+# networks:
+#   frontend:
+#     driver: bridge
+#   backend:
+#     driver: bridge
 
 
 services:
@@ -109,8 +109,8 @@ services:
         condition: service_started
       reverse-proxy:
         condition: service_started
-    networks:
-      - backend
+    # networks:
+    #   - backend
 #---------------------------------------------------------------
 # Node-red
 #---------------------------------------------------------------
@@ -153,8 +153,8 @@ services:
         - "/dev/mem:/dev/mem"
         - "/dev/gpiomem:/dev/gpiomem"
         - "/dev/i2c-1:/dev/i2c-1"
-    networks:
-      - backend
+    # networks:
+    #   - backend
     depends_on:
       influxdb:
         condition: service_started
@@ -201,5 +201,5 @@ services:
     image: traefik/whoami
     labels:
       - "traefik.http.routers.whoami.rule=Host(`whoami.docker.localhost`)"
-    networks:
-      - backend
+    # networks:
+    #   - backend
