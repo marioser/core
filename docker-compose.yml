@@ -189,9 +189,9 @@ services:
     labels:
         # So that Traefik can listen to the Docker events
         io.balena.features.balena-socket: '1'
-    networks:
-      - backend
-      - frontend
+    # networks:
+    #   - backend
+    #   - frontend
     depends_on:
       node-red:
         condition: service_started
