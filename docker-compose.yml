@@ -48,11 +48,17 @@ services:
       # Set service port
       - "traefik.http.services.influxdb.loadbalancer.server.port=8086"
       # Make it available on the "web" entrypoint which is defined below as :80
+      # - "traefik.http.routers.influxdb.rule=PathPrefix(`/data/`)"  # Cambia `/data` por tu path deseado
+      - "traefik.http.routers.influxdb.rule=Host(`influxdb.ubox.local`)"  # Cambia `/data` por tu path deseado
+      # - "traefik.http.middlewares.influx-root.redirectregex.regex=/data"
+      # - "traefik.http.middlewares.redirect-root.redirectregex.replacement=/data"
+      # - "traefik.http.routers.influxdb.middlewares=influx-root"
       - "traefik.http.routers.influxdb.entrypoints=web"
       # Add a specific path prefix that will be expected on the URL suffix
-      - "traefik.http.routers.influxdb.rule=Host(`influxdb2.ubox.localhost`)"
+      # - "traefik.http.routers.influxdb.rule=Host(`influxdb2.localhost)"
       # Redirect a request to root page to influxdb service
-      # - "traefik.http.middlewares.influxdb-clearPrefix.stripprefix.prefixes=/influxdb2"
+      # - "traefik.http.middlewares.influxdb-clearPrefix.stripprefix.prefixes=/data/"
+      # - "traefik.http.middlewares.influxdb-clearPrefix.addprefix.prefix=/data"
       # - "traefik.http.middlewares.influxdb-clearPrefix.stripprefix.forceSlash=false"
       # # # Apply Middelware to router influxdb
       # - "traefik.http.routers.influxdb.middlewares=influxdb-clearPrefix"
@@ -116,7 +122,7 @@ services:
 #---------------------------------------------------------------
 
   node-red:
-    image: bh.cr/balenalabs/balena-node-red
+    image: miometrix/raspicm4-ioboard-debian-node-red:lastest
     container_name: node-red
     privileged: true
     restart: unless-stopped
@@ -132,12 +138,13 @@ services:
       # Enable entrypoint HTTP Web
       - "traefik.http.routers.node-red.entrypoints=web"
       # Routing Gets /node-red
+      # - "traefik.http.routers.node-red.rule=Host(`node-red.localhost`)"
       - "traefik.http.routers.node-red.rule=PathPrefix(`/node-red`)"
       # Prepare Erase via Middelware Prefix /node-red
-      - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.prefixes=/node-red"
-      - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.forceSlash=false"
+      # - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.prefixes=/node-red"
+      # - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.forceSlash=false"
       # Apply Middelware to router node-red
-      - "traefik.http.routers.node-red.middlewares=node-red-clearPrefix"
+      # - "traefik.http.routers.node-red.middlewares=node-red-clearPrefix"
       # - "io.balena.features.dbus=true"
       # - "io.balena.features.sysfs=true"
       # - "io.balena.features.supervisor-api=true"
@@ -145,6 +152,7 @@ services:
 
     environment:
         TZ: America/Bogota
+        HTTPNODEROOT: "/node-red"
         PORT: 1880
         USERNAME: "balena"
         PASSWORD: "balena"
@@ -176,8 +184,11 @@ services:
         # Uncomment this to enable the Traefik WebUI on port :8080
         - "--api.insecure"
         - "--providers.docker=true"
+        # - "--providers.docker.endpoint=unix:///var/run/docker.sock"
         - "--providers.docker.endpoint=unix:///var/run/balena-engine.sock"
         - "--providers.docker.exposedbydefault=true"
+        - "--experimental.plugins.rewrite.modulename=github.com/traefik/plugin-rewritebody"
+        - "--experimental.plugins.rewrite.version=v0.3.1"
         - "--entrypoints.web.address=:80"
     restart: always
     ports:
