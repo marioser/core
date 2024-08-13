@@ -145,10 +145,10 @@ services:
       # - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.forceSlash=false"
       # Apply Middelware to router node-red
       # - "traefik.http.routers.node-red.middlewares=node-red-clearPrefix"
-      # - "io.balena.features.dbus=true"
-      # - "io.balena.features.sysfs=true"
-      # - "io.balena.features.supervisor-api=true"
-      # - "io.balena.features.balena-api=true"
+      - "io.balena.features.dbus=true"
+      - "io.balena.features.sysfs=true"
+      - "io.balena.features.supervisor-api=true"
+      - "io.balena.features.balena-api=true"
 
     environment:
         TZ: America/Bogota
