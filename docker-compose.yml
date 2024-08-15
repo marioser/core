@@ -20,7 +20,7 @@ services:
   # BalenaLabs WiFi-Connect
   # ------------------------------------------------------------------------------------
   wifi-connect:
-    image: balenablocks/wifi-connect:rpi
+    image: miometrix/raspicm4-ioboard-debian-wifi-connect
     container_name: wifi-connect
     network_mode: "host"
     ports:
