@@ -25,6 +25,7 @@ data:
     - PORTAL_SSID: Ubox_Portal
     - PORTAL_PASSPHRASE: 1234567
     - UI_DIRECTORY: ui
+    - TZ: America/Bogota
   defaultDeviceType: raspberry4-64
   supportedDeviceTypes:
     - raspberry-pi
