@@ -21,6 +21,10 @@ data:
     - PASSWORD: balena
     - ENCRIPTION_KEY: balena
     - HTTPNODEROOT: "/node-red"
+    - WIFIHOSPOT: wifi-connect
+    - PASSWIFIHOSPOT: 1234567
+    - WIFICONNECT: wificonnect
+    - PASSWIFICONNECT: passwificonnect
   defaultDeviceType: raspberry4-64
   supportedDeviceTypes:
     - raspberry-pi
