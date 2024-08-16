@@ -90,7 +90,7 @@ services:
       - "INFLUXDB_INIT_ORG=ubox"
       - "INFLUXDB_INIT_BUCKET=ubox-energia"
       - "INFLUXDB_HTTP_AUTH_ENABLED=true"
-      - "TZ"=$TZ
+      - "TZ=America/Bogota"
       
     # networks:
     #   - backend
