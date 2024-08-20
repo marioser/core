@@ -24,7 +24,7 @@ services:
     container_name: wifi-connect
     network_mode: "host"
     ports:
-      - "88:88"
+      - "80:80"
     labels:
         io.balena.features.dbus: '1'
         io.balena.features.firmware: '1'
@@ -210,11 +210,11 @@ services:
         - "--providers.docker.exposedbydefault=true"
         - "--experimental.plugins.rewrite.modulename=github.com/traefik/plugin-rewritebody"
         - "--experimental.plugins.rewrite.version=v0.3.1"
-        - "--entrypoints.web.address=:80"
+        - "--entrypoints.web.address=:88"
     restart: always
     ports:
       # The HTTP port
-      - "80:80"
+      - "88:80"
       # The Web UI (enabled by --api.insecure=true)
       - "8080:8080"
     volumes:
