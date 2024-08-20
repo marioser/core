@@ -31,7 +31,7 @@ services:
     environment:
         DBUS_SYSTEM_BUS_ADDRESS: "unix:path=/host/run/dbus/system_bus_socket"
         PORTAL_LISTENING_PORT: $PORTAL_LISTENING_PORT
-        UI_DIRECTORY: $UI_DIRECTORY
+        #UI_DIRECTORY: $UI_DIRECTORY
         PORTAL_PASSPHRASE: $PORTAL_PASSPHRASE
         PORTAL_SSID: $PORTAL_SSID
 
