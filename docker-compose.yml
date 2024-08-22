@@ -60,6 +60,8 @@ services:
     container_name: influxdb
     restart: unless-stopped
     hostname: influxdb
+    ports:
+      - "8086:8086"
     volumes:
       - influxdb-data:/var/lib/influxdb2
       - influxdb-etc:/etc/influxdb
