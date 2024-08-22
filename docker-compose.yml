@@ -72,7 +72,7 @@ services:
       - "traefik.http.services.influxdb.loadbalancer.server.port=8086"
       # Make it available on the "web" entrypoint which is defined below as :80
       # - "traefik.http.routers.influxdb.rule=PathPrefix(`/data/`)"  # Cambia `/data` por tu path deseado
-      - "traefik.http.routers.influxdb.rule=Host(`influxdb.ubox.local`)"  # Cambia `/data` por tu path deseado
+      - "traefik.http.routers.influxdb.rule=Host(`influxdb.localhost`)"  # Cambia `/data` por tu path deseado
       # - "traefik.http.middlewares.influx-root.redirectregex.regex=/data"
       # - "traefik.http.middlewares.redirect-root.redirectregex.replacement=/data"
       # - "traefik.http.routers.influxdb.middlewares=influx-root"
