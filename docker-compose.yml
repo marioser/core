@@ -163,12 +163,12 @@ services:
         - "traefik.http.routers.node-red.entrypoints=web"
         # Add a specific path prefix that will be expected on the URL suffix
         - "traefik.http.routers.node-red.rule=PathPrefix(`/node-red`)"
-        - "traefik.http.middlewares.strip-node-red-prefix.stripprefix.forceSlash=false"
+        # - "traefik.http.middlewares.strip-node-red-prefix.stripprefix.forceSlash=false"
         # - "traefik.http.routers.node-red.middlewares=strip-node-red-prefix"
-        - "io.balena.features.dbus=true"
-        - "io.balena.features.sysfs=true"
-        - "io.balena.features.supervisor-api=true"
-        - "io.balena.features.balena-api=true"
+        # - "io.balena.features.dbus=true"
+        # - "io.balena.features.sysfs=true"
+        # - "io.balena.features.supervisor-api=true"
+        # - "io.balena.features.balena-api=true"
 
     environment:
         TZ: America/Bogota
