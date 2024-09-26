@@ -20,21 +20,22 @@ services:
 # ------------------------------------------------------------------------------------
   # BalenaLabs WiFi-Connect
   # ------------------------------------------------------------------------------------
-  wifi-connect:
-    image: miometrix/raspicm4-ioboard-debian-wifi-connect:lastest
-    container_name: wifi-connect
-    network_mode: "host"
-    ports:
-      - 88:80
-    labels:
-        io.balena.features.dbus: '1'
-        io.balena.features.firmware: '1'
-    cap_add:
-        - NET_ADMIN
-    environment:
-        DBUS_SYSTEM_BUS_ADDRESS: "unix:path=/host/run/dbus/system_bus_socket"
-        PORTAL_PASSPHRASE: "Sgsoluciones2024*"
-        PORTAL_SSID: "Hostpot_UBOX"
+  #wifi-connect:
+    #image: miometrix/raspicm4-ioboard-debian-wifi-connect:lastest
+    #container_name: wifi-connect
+    #network_mode: "host"
+    #ports:
+    #  - "80:80"
+    #labels:
+    #    io.balena.features.dbus: '1'
+    #    io.balena.features.firmware: '1'
+    #cap_add:
+    #    - NET_ADMIN
+    #environment:
+    #    DBUS_SYSTEM_BUS_ADDRESS: "unix:path=/host/run/dbus/system_bus_socket"
+    #    PORTAL_LISTENING_PORT: $PORTAL_LISTENING_PORT
+    #    PORTAL_PASSPHRASE: $PORTAL_PASSPHRASE
+    #    PORTAL_SSID: $PORTAL_SSID
 
 
 # ------------------------------------------------------------------------------------
@@ -60,6 +61,8 @@ services:
     container_name: influxdb
     restart: unless-stopped
     hostname: influxdb
+    ports:
+      - "8086:8086"
     volumes:
       - influxdb-data:/var/lib/influxdb2
       - influxdb-etc:/etc/influxdb
@@ -70,7 +73,7 @@ services:
       - "traefik.http.services.influxdb.loadbalancer.server.port=8086"
       # Make it available on the "web" entrypoint which is defined below as :80
       # - "traefik.http.routers.influxdb.rule=PathPrefix(`/data/`)"  # Cambia `/data` por tu path deseado
-      - "traefik.http.routers.influxdb.rule=Host(`influxdb.ubox.local`)"  # Cambia `/data` por tu path deseado
+      - "traefik.http.routers.influxdb.rule=Host(`influxdb.localhost`)"  # Cambia `/data` por tu path deseado
       # - "traefik.http.middlewares.influx-root.redirectregex.regex=/data"
       # - "traefik.http.middlewares.redirect-root.redirectregex.replacement=/data"
       # - "traefik.http.routers.influxdb.middlewares=influx-root"

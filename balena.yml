@@ -21,6 +21,13 @@ data:
     - PASSWORD: balena
     - ENCRIPTION_KEY: balena
     - HTTPNODEROOT: "/node-red"
+    - PORTAL_LISTENING_PORT: 80
+    - PORTAL_SSID: Ubox_Portal
+    - PORTAL_PASSPHRASE: 12345678
+    - UI_DIRECTORY: ui
+    - WIFISSID: test
+    - PASSWIFISSID: 123456789
+    - TZ: America/Bogota
   defaultDeviceType: raspberry4-64
   supportedDeviceTypes:
     - raspberry-pi
