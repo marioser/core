@@ -155,24 +155,20 @@ services:
     volumes:
         - "node-red-data:/data"
     labels:
-      # Enable traefik
-      - "traefik.enable=true"
-      # connect service to loadbalancer whit port 1880
-      - "traefik.http.services.node-red.loadbalancer.server.port=1880"
-      # Enable entrypoint HTTP Web
-      - "traefik.http.routers.node-red.entrypoints=web"
-      # Routing Gets /node-red
-      # - "traefik.http.routers.node-red.rule=Host(`node-red.localhost`)"
-      - "traefik.http.routers.node-red.rule=PathPrefix(`/node-red`)"
-      # Prepare Erase via Middelware Prefix /node-red
-      # - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.prefixes=/node-red"
-      # - "traefik.http.middlewares.node-red-clearPrefix.stripprefix.forceSlash=false"
-      # Apply Middelware to router node-red
-      # - "traefik.http.routers.node-red.middlewares=node-red-clearPrefix"
-      - "io.balena.features.dbus=true"
-      - "io.balena.features.sysfs=true"
-      - "io.balena.features.supervisor-api=true"
-      - "io.balena.features.balena-api=true"
+    # Enable traefik support for this container
+        - "traefik.enable=true"
+        # Set service port
+        - "traefik.http.services.node-red.loadbalancer.server.port=80"
+        # Make it available on the "web" entrypoint which is defined below as :80
+        - "traefik.http.routers.node-red.entrypoints=web"
+        # Add a specific path prefix that will be expected on the URL suffix
+        - "traefik.http.routers.node-red.rule=PathPrefix(`/node-red`)"
+        - "traefik.http.middlewares.strip-node-red-prefix.stripprefix.forceSlash=false"
+        - "traefik.http.routers.node-red.middlewares=strip-node-red-prefix"
+        - "io.balena.features.dbus=true"
+        - "io.balena.features.sysfs=true"
+        - "io.balena.features.supervisor-api=true"
+        - "io.balena.features.balena-api=true"
 
     environment:
         TZ: America/Bogota
