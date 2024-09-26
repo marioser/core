@@ -151,14 +151,14 @@ services:
     privileged: true
     restart: unless-stopped
     ports:
-      - 1880:1880
+      - 1880:80
     volumes:
         - "node-red-data:/data"
     labels:
     # Enable traefik support for this container
         - "traefik.enable=true"
         # Set service port
-        - "traefik.http.services.node-red.loadbalancer.server.port=1880"
+        - "traefik.http.services.node-red.loadbalancer.server.port=80"
         # Make it available on the "web" entrypoint which is defined below as :80
         - "traefik.http.routers.node-red.entrypoints=web"
         # Add a specific path prefix that will be expected on the URL suffix
