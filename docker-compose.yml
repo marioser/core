@@ -103,7 +103,7 @@ services:
   # Grafana
   # ------------------------------------------------------------------------------------
   grafana:
-    image: grafana/grafana:main
+    image: miometrix/miobox-dash:latest
     container_name: grafana
     restart: unless-stopped
     ports:
