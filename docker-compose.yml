@@ -102,7 +102,7 @@ services:
 # ------------------------------------------------------------------------------------
   # Grafana
   # ------------------------------------------------------------------------------------
-  grafana:
+  miobox-dash:
     image: miometrix/miobox-dash:latest
     container_name: grafana
     restart: unless-stopped
